@@ -82,6 +82,19 @@ def test_pid_file_not_in_state_dir(tmpdir):
     assert watchdog.get_pid_in_state_dir(STATE_FILE, str(tmpdir)) is None
 
 
+def test_get_pid_in_state_dir_deleted_before_open(mocker, tmpdir):
+    # Simulate the mount's unmount teardown deleting the pid file between the
+    # existence check and open() under high churn. get_pid_in_state_dir must
+    # return None rather than let FileNotFoundError crash the watchdog.
+    mount_dir = create_dir(tmpdir, MOUNT_STATE_DIR)
+    pid_dir, pid_file, abs_pid_file = create_pid_file(mount_dir, PID)
+    assert os.path.exists(abs_pid_file)
+
+    mocker.patch("watchdog.open", side_effect=FileNotFoundError)
+
+    assert watchdog.get_pid_in_state_dir(STATE_FILE, str(tmpdir)) is None
+
+
 def test_is_mount_stunnel_proc_running_pid_empty(tmpdir):
     assert False == watchdog.is_mount_stunnel_proc_running(None, STATE_FILE, tmpdir)
 

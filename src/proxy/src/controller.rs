@@ -218,7 +218,12 @@ impl<S: ProxyStream> Controller<S> {
             }
 
             // Skip channel init if read bypass is not requested
-            let channel_init_config = if !self.proxy_config.nested_config.read_bypass_config.requested {
+            let channel_init_config = if !self
+                .proxy_config
+                .nested_config
+                .read_bypass_config
+                .requested
+            {
                 ChannelInitConfig::default()
             } else {
                 let configs = vec![ChannelConfigArgs::AWSFILE_READ_BYPASS_V2(
@@ -503,10 +508,8 @@ impl<S: ProxyStream> Controller<S> {
 mod tests {
     use super::*;
     use crate::{
-        aws::cw_publisher::LogLevel,
-        config::channel_init_config::ChannelInitConfig,
-        proxy_builder::ProxyBuilder,
-        status_reporter::create_status_channel,
+        aws::cw_publisher::LogLevel, config::channel_init_config::ChannelInitConfig,
+        proxy_builder::ProxyBuilder, status_reporter::create_status_channel,
     };
     use std::sync::atomic::AtomicU64;
     use tokio::net::TcpStream;
@@ -599,12 +602,7 @@ mod tests {
         )
         .await;
 
-        let mut state = IncarnationState::new(
-            ProxyIdentifier::new(),
-            None,
-            events_tx,
-            1,
-        );
+        let mut state = IncarnationState::new(ProxyIdentifier::new(), None, events_tx, 1);
 
         let period_secs = 10;
         let publisher_clone = mock_publisher.clone();

@@ -37,6 +37,11 @@ tarball: clean
 	cp -rp src/mount_s3files $(PACKAGE_NAME)/src
 	cp -rp src/watchdog $(PACKAGE_NAME)/src
 	cp -rp src/proxy $(PACKAGE_NAME)/src
+	cp -rp src/client-core $(PACKAGE_NAME)/src
+	# efs-proxy and the nfs-xdr-bindings crate share a Cargo workspace rooted at
+	# src/, so ship the bindings crate and the src/Cargo.toml workspace manifest too.
+	cp -rp src/nfs-xdr-bindings $(PACKAGE_NAME)/src
+	cp -p src/Cargo.toml $(PACKAGE_NAME)/src
 
 	mkdir -p ${PACKAGE_NAME}/man
 	cp -rp man/mount.efs.8 ${PACKAGE_NAME}/man
